@@ -1,0 +1,5 @@
+{
+    "FileOptions": {
+        "ExcludeSearchPatterns": ["data"]
+    }
+}

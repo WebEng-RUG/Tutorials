@@ -7,7 +7,10 @@ info:
     context of the tutorials for the course Web Engineering at the RuG.
 
 servers:
-  - url: https://api.server.test/v1
+  - url: http://localhost:3001
+    description: .NET Core backend implementation
+  - url: http://localhost:3002
+    description: ExpressJS backend implementation
 
 components:
   schemas:
@@ -148,6 +151,23 @@ components:
           - desc
           - asc
 
+    limit:
+      name: limit
+      in: query
+      required: true
+      description: Limit the number of returned items
+      schema:
+        type: integer
+        maximum: 100
+
+    offset:
+      name: offset
+      in: query
+      required: false
+      description: The number of items to skip before returning {limit} items
+      schema:
+        type: integer
+
     movie-filter-title:
       name: title
       in: query
@@ -183,6 +203,8 @@ paths:
       parameters:
         - $ref: "#/components/parameters/order-by"
         - $ref: "#/components/parameters/order-dir"
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
         - $ref: "#/components/parameters/movie-filter-title"
         - $ref: "#/components/parameters/movie-filter-year"
           
@@ -326,6 +348,10 @@ paths:
         - Actors
       summary: Retrieve a list of actors
       description: Retrieves a list of all actors
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+
       responses:
         '200':
           description: ""
