@@ -17,6 +17,6 @@ export class Paging<T> implements IQueryHelper<T> {
     public apply(query: SelectQueryBuilder<T>): SelectQueryBuilder<T> {
         if (!this.limit) this.limit = 100; // default
         if (!this.offset) this.offset = 0;
-        return query.skip(this.offset).limit(this.limit);
+        return query.skip(this.offset).take(this.limit);
     }
 }

@@ -67,7 +67,7 @@ components:
               description: Ratings by IMDb users
               minimum: 1
               maximum: 10
-            user-count:
+            usercount:
               type: integer
               description: Number of ratings by IMDb users
             metascore:

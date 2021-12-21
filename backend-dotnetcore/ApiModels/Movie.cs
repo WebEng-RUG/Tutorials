@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -17,7 +18,7 @@ public class Movie
     public ReviewSummary Review { get; set; } = new();
     public List<string> Languages { get; set; } = new();
     public List<ActorSummary> Actors { get; set; } = new();
-    [BindRequired]
+    [BindRequired, JsonPropertyName("imdb_url")]
     public string IMDbUrl { get; set; }
 
     public static Movie FromDatabase(Models.Movie movie) =>
@@ -30,6 +31,11 @@ public class Movie
             Rating = movie.Rating,
             Languages = movie.Languages.Select(l => l.Name).ToList(),
             Actors = movie.Actors.Select(ActorSummary.FromDatabase).ToList(),
+            Review = {
+                MetaScore = movie.Review.MetaScore,
+                User = movie.Review.UserScore,
+                UserCount = movie.Review.UserCount
+            },
             IMDbUrl = movie.IMDbUrl
         };
 
