@@ -1,6 +1,6 @@
 ~*.pptx
 node_modules
-data/db
+data/db*
 .env
 obj
 backend-dotnetcore/bin
