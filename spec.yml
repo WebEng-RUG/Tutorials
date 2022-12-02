@@ -6,6 +6,10 @@ info:
     This specification serves as the baseline for all tools developed in the
     context of the tutorials for the course Web Engineering at the RuG.
 
+servers:
+  - url: http://localhost:3001
+    description: Future backend implementation
+
 components:
   schemas:
     Actor:
