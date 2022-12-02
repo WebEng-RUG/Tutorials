@@ -1,0 +1,427 @@
+openapi: '3.0.2'
+info:
+  title: Web Engineering Movies API
+  version: '1.0'
+  description: |
+    This specification serves as the baseline for all tools developed in the
+    context of the tutorials for the course Web Engineering at the RuG.
+
+components:
+  schemas:
+    Actor:
+      type: object
+      required:
+        - "name"
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+        movies:
+          type: array
+          items:
+            $ref: "#/components/schemas/MovieSummary"
+    
+    ActorSummary:
+      type: object
+      required:
+        - "name"
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+
+    Movie:
+      type: object
+      required:
+        - "title"
+        - "year"
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+        description:
+          type: string
+        year:
+          type: integer
+          description: Year of release
+        rating:
+          type: string
+          description: MPA film rating
+        review:
+          type: object
+          properties:
+            user:
+              type: number
+              description: Ratings by IMDb users
+              minimum: 1
+              maximum: 10
+            usercount:
+              type: integer
+              description: Number of ratings by IMDb users
+            metascore:
+              type: integer
+              minimum: 1
+              maximum: 100
+        languages:
+          type: array
+          items:
+            type: string
+        actors:
+          type: array
+          items:
+            $ref: "#/components/schemas/ActorSummary"
+        imdb_url:
+          type: string
+
+    MovieSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+        year:
+          type: integer
+          description: Year of release
+        rating:
+          type: string
+          description: MPA film rating
+        
+
+    MovieFilterKeys:
+      type: string
+      enum:
+        - title
+        - year
+        - rating
+
+
+
+  responses:
+    BadRequest:
+      description: Request was not well-formed, see error details
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error-message:
+                type: string
+                description: Error message detailing the problem with the request
+
+    NotFound:
+      description: Resource not found
+
+    NoResults:
+      description: List empty; no results
+
+    ServerError:
+      description: Server error; no results, try again later
+
+  parameters:
+    order-by:
+      name: order-by
+      in: query
+      required: false
+      description: The column to order the result data by
+      schema:
+        $ref: "#/components/schemas/MovieFilterKeys"
+
+    order-dir:
+      name: order-dir
+      in: query
+      required: false
+      description: The directorion to order the indicated column
+      schema:
+        type: string
+        enum:
+          - desc
+          - asc
+
+    limit:
+      name: limit
+      in: query
+      required: true
+      description: Limit the number of returned items
+      schema:
+        type: integer
+        maximum: 100
+
+    offset:
+      name: offset
+      in: query
+      required: false
+      description: The number of items to skip before returning {limit} items
+      schema:
+        type: integer
+
+    movie-filter-title:
+      name: title
+      in: query
+      required: false
+      description: Filtering the results by title
+      schema:
+        type: string
+
+    movie-filter-year:
+      name: year
+      in: query
+      required: false
+      description: Filtering the results by year
+      schema:
+        type: integer
+
+    actor-id:
+      name: id
+      in: path
+      required: true
+      description: The ID of the actor
+      schema:
+        type: integer
+
+
+paths:
+  /movies:
+    get:
+      tags:
+        - Movies
+      description: Retrieves a list of movies, possibly filtered by the requested criteria
+      summary: Retrieve a list of (selected) movies
+      parameters:
+        - $ref: "#/components/parameters/order-by"
+        - $ref: "#/components/parameters/order-dir"
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - $ref: "#/components/parameters/movie-filter-title"
+        - $ref: "#/components/parameters/movie-filter-year"
+          
+      responses:
+        '200':
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MovieSummary"
+        '204':
+          $ref: "#/components/responses/NoResults"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    post:
+      tags:
+        - Movies
+      summary: Create a new movie
+      description: Creates a new movie with the given information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Movie"
+      responses:
+        '201':
+          description: Movie successfully created
+          content:
+            application/json:
+              schema:
+                type: integer
+                description: ID of newly created movie
+          headers:
+            Location:
+              schema:
+                type: string
+              description: The URL of the newly-created movie
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '409':
+          description: Movie with the same name already exists
+          headers:
+            Location:
+              schema:
+                type: string
+              description: The URL of the pre-existing movie
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+  /movies/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: The ID of the movie
+        schema:
+          type: integer
+
+    get:
+      tags:
+        - Movies
+      summary: Retrieve a selected movie
+      description: Retrieves the movie with the given id
+      responses:
+        '200':
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Movie"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref:  "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    put:
+      tags:
+        - Movies
+      summary: Update a movie
+      description: Updates the movie with the given id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Movie"
+      responses:
+        '200':
+          description: "Movie updated, returns the new state"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Movie"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    delete:
+      tags:
+        - Movies
+      summary: Delete a movie
+      description: Deletes the movie with the given id
+      responses:
+        '204':
+          description: Movie deleted successfully
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+  /actors:
+    get:
+      tags:
+        - Actors
+      summary: Retrieve a list of actors
+      description: Retrieves a list of all actors
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+
+      responses:
+        '200':
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActorSummary"
+        '204':
+          $ref: "#/components/responses/NoResults"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+  /actors/{id}:
+    parameters:
+      - $ref: "#/components/parameters/actor-id"
+
+    get:
+      tags:
+        - Actors
+      summary: Retrieve a selected actor
+      description: Retrieves the actor with the given id
+      responses:
+        '200':
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Actor"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref:  "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+  /actors/{id}/movies:
+    parameters:
+      - $ref: "#/components/parameters/actor-id"
+
+    get:
+      tags:
+        - Actors
+      summary: Retrieve a list of movies featuring a selected actor
+      description: Retrieves all movies featuring the actor with the given id, possibly filtered by the requested criteria
+      parameters:
+        - $ref: "#/components/parameters/order-by"
+        - $ref: "#/components/parameters/order-dir"
+        - $ref: "#/components/parameters/movie-filter-title"
+        - $ref: "#/components/parameters/movie-filter-year"
+          
+      responses:
+        '200':
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MovieSummary"
+        '204':
+          $ref: "#/components/responses/NoResults"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref:  "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
