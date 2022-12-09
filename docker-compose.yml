@@ -1,0 +1,48 @@
+version: '3.8'
+
+# In the docker compose file, we define a number of services (containers) we want to run.
+services:
+
+  # We want to run MariaDB as a database server
+  mariadb:
+    image: mariadb:10.10
+    environment: # Configuration of the database server as specified in their README
+      MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD?:}
+      MYSQL_DATABASE: ${DATABASE_NAME?:}
+      MYSQL_USER: ${DATABASE_USER?:}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD?:}
+    ports: # We expose the database on the port specified in the .env file
+      - ${DATABASE_PORT:-3306}:3306
+    volumes:
+      # We store the database files in ./data/db in our repository
+      - ./data/db:/var/lib/mysql
+      # We mount the SQL dump files in ./data/sql to automatically seed the database
+      - "./data/sql:/docker-entrypoint-initdb.d"
+    restart: always
+
+  # Service specification for the .NET Core-based backend
+  backend-dotnet:
+    image: webeng-tutorial/backend-dotnet
+    build: # We specify how to build the image name given above: by building the Dockerfile in the directory specified
+      context: ./backend-dotnetcore
+    depends_on: # The backend can only run when the database is up
+      - mariadb
+    environment:
+      - ConnectionStrings__DefaultConnection=server=mariadb;port=3306;database=${DATABASE_NAME?:};user=${DATABASE_USER?:};password=${DATABASE_PASSWORD?:}
+    ports: # We expose this backend on the port specified in the .env file
+      - ${BACKEND_DOTNET_PORT?:}:80
+
+  backend-express:
+    image: webeng-tutorial/backend-express
+    build:
+      context: ./backend-express
+    depends_on:
+      - mariadb
+    environment:
+      - DATABASE_HOST=mariadb
+      - DATABASE_USER=${DATABASE_USER?:}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD?:}
+      - DATABASE_NAME=${DATABASE_NAME?:}
+      - DATABASE_PORT=3306
+    ports:
+      - ${BACKEND_EXPRESS_PORT?:}:80
