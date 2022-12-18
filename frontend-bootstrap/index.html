@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Movies Frontend Demo</title>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+</head>
+
+<body>
+    <header class="p-3 text-bg-dark">
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <a class="navbar-brand">
+                    Demo Website
+                </a>
+
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 mb-md-0 ms-4">
+                    <li><a href="." class="nav-link px-2 text-secondary">Home</a></li>
+                    <li><a target="_blank" href="https://rug.nl/" class="nav-link px-2 text-white">RuG Website</a></li>
+                    <li><a target="_blank" href="https://brightspace.rug.nl/"
+                            class="nav-link px-2 text-white">Brightspace</a></li>
+                </ul>
+
+                <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+                    <input type="search" class="form-control form-control-dark text-bg-dark" placeholder="Search..."
+                        aria-label="Search">
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mb-4">
+        <div class="bg-light p-5 rounded mt-4 text-center">
+            <h1>Movies Frontend Demo - Bootstrap</h1>
+            <p class="lead">This is a demo for styling the vanilla frontend demo with Bootstrap.</p>
+        </div>
+
+        <h3 class="mt-4">Find Movies</h3>
+        <hr />
+
+        <div class="row mt-4">
+            <div class="col-12 col-md-3">
+                <server-preference></server-preference>
+            </div>
+        </div>
+
+        <movie-finder id="finder"></movie-finder>
+
+        <movie-detail id="detail" movie-id=""></movie-detail>
+    </div>
+
+    <!-- Templates here -->
+    <template id="server-preference">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+        <label for="server-options" class="form-label">Select backend server</label>
+        <select class="form-select" id="server-options">
+            <!-- To be filled by the component -->
+        </select>
+    </template>
+
+    <template id="movie-finder">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+
+        <div class="row mt-2">
+            <div class="col-12 col-md-5">
+                <input type="text" class="form-control" id="title" placeholder="Title (empty for all)" />
+            </div>
+            <div class="col-12 col-md-5">
+                <input type="number" class="form-control" id="year" placeholder="Year (empty for all)" />
+            </div>
+            <div class="col-12 col-md-2 d-grid">
+                <button class="btn btn-primary" id="find">Find!</button>
+            </div>
+        </div>
+
+        <div id="movies">
+            <!-- To be filled by the component -->
+        </div>
+
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item"><button class="page-link" id="page-prev">Previous</li>
+                <li class="page-item"><button class="page-link" id="page-next">Next</li>
+            </ul>
+        </nav>
+
+        <style>
+            :host {
+                display: block;
+            }
+        </style>
+    </template>
+
+    <template id="movie-summary">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+        <div class="bg-light p-3 mt-2 rounded">
+            <h5 class="mb-0">
+                <slot name="title"></slot> (<slot name="year"></slot>) <slot name="rating"></slot>
+            </h5>
+        </div>
+
+        <style>
+            :host {
+                cursor: pointer;
+            }
+        </style>
+    </template>
+
+    <template id="movie-detail">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+
+        <div class="bg-light p-5 rounded mt-4" id="movie-details">
+            <div class="row">
+                <h5><span id="title"></span> <span class="ms-2 badge" id="rating"></span></h5>
+                <div class="col-12 col-md-6">
+                    <p id="desc"></p>
+                    <p>Released in <strong id="year"></strong></p>
+                    <p>Languages: <strong id="langs"></strong></p>
+                </div>
+                <div class="col-12 col-md-6">
+                    <h6>Actors</h6>
+                    <p id="actors"></p>
+                </div>
+            </div>
+            <a class="btn btn-primary" id="url" target="_blank">View Movie</a>
+        </div>
+    </template>
+    <!-- End templates -->
+
+    <script type="module" src="main.js"></script>
+    <script>
+        // This allows us to 'connect' the finder and detail element without
+        // either of them being "aware of" the other. We listen for the special
+        // movie-selected event omitted by the finder, and when it is triggered
+        // we update the selected movie for the detail list.
+        document.getElementById("finder").addEventListener("movie-selected", ev => {
+            document.getElementById("detail").movieId = ev.movieId;
+        });
+    </script>
+</body>
+
+</html>

@@ -53,3 +53,10 @@ services:
       context: ./frontend-vanilla
     ports:
       - ${FRONTEND_VANILLA_PORT?:}:80
+
+  frontend-bootstrap:
+    image: webeng-tutorial/frontend-bootstrap
+    build:
+      context: ./frontend-bootstrap
+    ports:
+      - ${FRONTEND_BOOTSTRAP_PORT?:}:80
