@@ -46,3 +46,10 @@ services:
       - DATABASE_PORT=3306
     ports:
       - ${BACKEND_EXPRESS_PORT?:}:80
+
+  frontend-vanilla:
+    image: webeng-tutorial/frontend-vanilla
+    build:
+      context: ./frontend-vanilla
+    ports:
+      - ${FRONTEND_VANILLA_PORT?:}:80

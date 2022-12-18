@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Movies Frontend Demo</title>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+        <h1>Movies Frontend Demo</h1>
+        <server-preference></server-preference>
+        <movie-finder id="finder"></movie-finder>
+        <movie-detail id="detail" movie-id=""></movie-detail>
+
+        <!-- Templates here -->
+        <template id="server-preference">
+            <h2>Select back-end server</h2>
+            <select id="server-options">
+                <!-- To be filled by the component -->
+            </select>
+        </template>
+
+        <template id="movie-finder">
+            <h2>Find movies</h2>
+            <input type="text" id="title" placeholder="Title (empty for all)" /><br>
+            <input type="number" id="year" placeholder="Year (empty for all)" /><br>
+            <button id="find">Find!</button>
+
+            <div>
+                <button id="page-prev">Prev</button>
+                <button id="page-next">Next</button>
+            </div>
+            <div id="movies">
+                <!-- To be filled by the component -->
+            </div>
+
+            <style>
+                :host {
+                    display: block;
+                }
+            </style>
+        </template>
+
+        <template id="movie-summary">
+            <div>
+                <h3><slot name="title">Movie title</slot></h3>
+                <p><slot name="subtitle">Year - Rating</slot></p>
+            </div>
+
+            <style>
+                :host {
+                    cursor: pointer;
+                }
+            </style>
+        </template>
+
+        <template id="movie-detail">
+            <div>
+                <h2>Movie details</h2>
+                <dl>
+                    <dd>Title</dd>
+                    <dt id="title"></dt>
+                    <dd>Description</dd>
+                    <dt id="desc"></dt>
+                    <dd>Year</dd>
+                    <dt id="year"></dt>
+                    <dd>Rating</dd>
+                    <dt id="rating"></dt>
+                    <dd>Languages</dd>
+                    <dt id="langs"></dt>
+                    <dd>Actors</dd>
+                    <dt id="actors"></dt>
+                    <dd>URL</dd>
+                    <dt><a id="url"></a></dt>
+                </dl>
+            </div>
+        </template>
+        <!-- End templates -->
+
+        <script type="module" src="main.js"></script>
+        <script>
+            // This allows us to 'connect' the finder and detail element without
+            // either of them being "aware of" the other. We listen for the special
+            // movie-selected event omitted by the finder, and when it is triggered
+            // we update the selected movie for the detail list.
+            document.getElementById("finder").addEventListener("movie-selected", ev => {
+                document.getElementById("detail").movieId = ev.movieId;
+            });
+        </script>
+    </body>
+</html>
