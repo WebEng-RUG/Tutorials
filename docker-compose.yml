@@ -54,6 +54,15 @@ services:
     ports:
       - ${FRONTEND_VANILLA_PORT?:}:80
 
+  frontend-react:
+    image: webeng-tutorial/frontend-react
+    build:
+      context: ./frontend-react
+    ports:
+      - ${FRONTEND_REACT_PORT?:}:80
+    environment:
+      - REACT_APP_BACKENDS=${BACKENDS?:}
+
   frontend-bootstrap:
     image: webeng-tutorial/frontend-bootstrap
     build:

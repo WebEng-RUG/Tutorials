@@ -1,0 +1,4 @@
+## A robots.txt file tells search engine crawlers which URLs the crawler can access on your site. This is used mainly to avoid overloading your site with requests; 
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Disallow:

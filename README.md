@@ -2,7 +2,7 @@
 
 This repository contains pieces of an example version of the project to be performed for the course Web Engineering taught at RuG. The work centers around a series of tutorials taught throughout the course, all working on building out the same application.
 
-This repository currently contains an API specification (in `./specification`) in OpenAPI 3.x format, as well as two different backend implementations, one using ExpressJS with TypeScript and one using the ASP.NET Core framework. Additionally, two front-ends were built using vanilla JS, one without any third-party libraries and one using bootstrap for styling.
+This repository currently contains an API specification (in `./specification`) in OpenAPI 3.x format, as well as two different backend implementations, one using ExpressJS with TypeScript and one using the ASP.NET Core framework. Additionally, three front-ends were built: two using vanilla JS, one without any third-party libraries and one using bootstrap for styling; and one using React.
 
 You can quickly start exploring/editing without cloning the repository in two ways:
 
