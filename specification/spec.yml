@@ -8,7 +8,9 @@ info:
 
 servers:
   - url: http://localhost:3001
-    description: Future backend implementation
+    description: .NET Core backend implementation
+  - url: http://localhost:3002
+    description: ExpressJS backend implementation
 
 components:
   schemas:
