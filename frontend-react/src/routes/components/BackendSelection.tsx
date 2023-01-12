@@ -17,11 +17,16 @@ function BackendSelection({setBackend} : SetBackend) : JSX.Element {
         setBackend(event.target.value);
     }
 
-    // get the list of backends from the environment variable called REACT_APP_BACKENDS from the dotenv file
-    let backends = process.env.REACT_APP_BACKENDS?.split(',');
+    // get the list of backends, this is an environment variable reference that will be
+    // substituted by nginx at runtime when running in Docker.
+    let backends = "${BACKENDS}".split(",");
+
+    // if we're not running in Docker, then read from an environment variable directly
+    if(backends.length >= 1 && backends[0].startsWith("${"))
+        backends = process.env.REACT_APP_BACKENDS?.split(",") ?? [];
     
     // if no backends are found in the environment variable, then use the fallback values
-    if (!backends || backends?.[0] === '') {
+    if (backends.length === 0 || backends[0] === "") {
         console.error("No backends found");
         backends = [
             "http://localhost:3001",

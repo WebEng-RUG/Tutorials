@@ -15,7 +15,7 @@ export default async function apiCall(url, method = "GET", data = null) {
         throw new Error("No server preference set!");
 
     // Construct URL
-    url = `http://${server}/${url}`;
+    url = `${server}/${url}`;
 
     // Set options
     /** @type {RequestInit} */

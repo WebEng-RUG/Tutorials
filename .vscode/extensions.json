@@ -1,14 +1,15 @@
 {
-    "recommendations": [
-        "mikestead.dotenv",
-        "ms-dotnettools.csharp",
-        "ms-azuretools.vscode-docker",
-        "dbaeumer.vscode-eslint",
-        "shd101wyy.markdown-preview-enhanced",
-        "eg2.vscode-npm-script",
-        "42crunch.vscode-openapi",
-        "formulahendry.terminal",
-        "henrynguyen5-vsc.vsc-nvm",
-        "redhat.vscode-yaml"
-    ]
+  "recommendations": [
+    "mikestead.dotenv",
+    "ms-dotnettools.csharp",
+    "ms-azuretools.vscode-docker",
+    "dbaeumer.vscode-eslint",
+    "shd101wyy.markdown-preview-enhanced",
+    "eg2.vscode-npm-script",
+    "42crunch.vscode-openapi",
+    "henrynguyen5-vsc.vsc-nvm",
+    "redhat.vscode-yaml",
+    "Vue.volar",
+    "Vue.vscode-typescript-vue-plugin"
+  ]
 }

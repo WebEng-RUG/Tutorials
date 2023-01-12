@@ -1,11 +1,12 @@
+import { options } from "./server-options.js";
+
 export default {
     /**
      * Returns the list of usable backend servers
      * @returns {string[]}
      */
     getServerOptions() {
-        // Note: update this list when changing your .env
-        return ["localhost:3001", "localhost:3002"];
+        return options;
     },
 
     /**

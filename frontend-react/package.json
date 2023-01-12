@@ -24,9 +24,7 @@
     "@types/react-router": "^5.1.19"
   },
   "scripts": {
-    "start": "react-scripts start",
     "dev": "react-scripts -r dotenv/config -r dotenv-expand/config start dotenv_config_path=../.env",
-    "dev:container": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

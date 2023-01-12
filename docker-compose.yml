@@ -7,10 +7,10 @@ services:
   mariadb:
     image: mariadb:10.10
     environment: # Configuration of the database server as specified in their README
-      MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD?:}
-      MYSQL_DATABASE: ${DATABASE_NAME?:}
-      MYSQL_USER: ${DATABASE_USER?:}
-      MYSQL_PASSWORD: ${DATABASE_PASSWORD?:}
+      MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD:?}
+      MYSQL_DATABASE: ${DATABASE_NAME:?}
+      MYSQL_USER: ${DATABASE_USER:?}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD:?}
     ports: # We expose the database on the port specified in the .env file
       - ${DATABASE_PORT:-3306}:3306
     volumes:
@@ -28,10 +28,11 @@ services:
     depends_on: # The backend can only run when the database is up
       - mariadb
     environment:
-      - ConnectionStrings__DefaultConnection=server=mariadb;port=3306;database=${DATABASE_NAME?:};user=${DATABASE_USER?:};password=${DATABASE_PASSWORD?:}
+      - ConnectionStrings__DefaultConnection=server=mariadb;port=3306;database=${DATABASE_NAME:?};user=${DATABASE_USER:?};password=${DATABASE_PASSWORD:?}
     ports: # We expose this backend on the port specified in the .env file
-      - ${BACKEND_DOTNET_PORT?:}:80
+      - ${BACKEND_DOTNET_PORT:?}:80
 
+  # Service specification for the Node/ExpressJS-based backend
   backend-express:
     image: webeng-tutorial/backend-express
     build:
@@ -40,32 +41,46 @@ services:
       - mariadb
     environment:
       - DATABASE_HOST=mariadb
-      - DATABASE_USER=${DATABASE_USER?:}
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD?:}
-      - DATABASE_NAME=${DATABASE_NAME?:}
+      - DATABASE_USER=${DATABASE_USER:?}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD:?}
+      - DATABASE_NAME=${DATABASE_NAME:?}
       - DATABASE_PORT=3306
     ports:
-      - ${BACKEND_EXPRESS_PORT?:}:80
+      - ${BACKEND_EXPRESS_PORT:?}:80
 
+  # Service specification for the Vanilla frontend
   frontend-vanilla:
     image: webeng-tutorial/frontend-vanilla
     build:
       context: ./frontend-vanilla
     ports:
-      - ${FRONTEND_VANILLA_PORT?:}:80
-
-  frontend-react:
-    image: webeng-tutorial/frontend-react
-    build:
-      context: ./frontend-react
-    ports:
-      - ${FRONTEND_REACT_PORT?:}:80
+      - ${FRONTEND_VANILLA_PORT:?}:80
     environment:
-      - REACT_APP_BACKENDS=${BACKENDS?:}
+      - BACKENDS
 
   frontend-bootstrap:
     image: webeng-tutorial/frontend-bootstrap
     build:
       context: ./frontend-bootstrap
     ports:
-      - ${FRONTEND_BOOTSTRAP_PORT?:}:80
+      - ${FRONTEND_BOOTSTRAP_PORT:?}:80
+    environment:
+      - BACKENDS
+
+  frontend-react:
+    image: webeng-tutorial/frontend-react
+    build:
+      context: ./frontend-react
+    ports:
+      - ${FRONTEND_REACT_PORT:?}:80
+    environment:
+      - BACKENDS
+
+  frontend-vue:
+    image: webeng-tutorial/frontend-vue
+    build:
+      context: ./frontend-vue
+    ports:
+      - ${FRONTEND_VUE_PORT:?}:80
+    environment:
+      - BACKENDS
